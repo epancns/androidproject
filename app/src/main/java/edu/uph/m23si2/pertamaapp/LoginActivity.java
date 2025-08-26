@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import edu.uph.m23si2.pertamaapp.model.Mahasiswa;
+import edu.uph.m23si2.pertamaapp.model.Matakuliah;
+import edu.uph.m23si2.pertamaapp.model.Prodi;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -52,6 +56,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void initData(){ // menambahkan data prodi dan matakuliah
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(r -> {
+            Number maxId = r.where(Mahasiswa.class).max("studentID");
+            Prodi prodiSI = r.createObject(Prodi.class,0);
+            prodiSI.setFakultas("Fakultas Teknologi Informasi");
+            prodiSI.setNama("Sistem Informasi");
+
+            Matakuliah matMobile = r.createObject(Matakuliah.class,0);
+            matMobile.setNama("Pemrograman Mobile Lanjut");
+            matMobile.setSks(3);
+            matMobile.setProdi(prodiSI);
+
+            Matakuliah matPBO = r.createObject(Matakuliah.class,1);
+            matPBO.setNama("Pemrograman Berorientasi Objek");
+            matPBO.setSks(3);
+            matPBO.setProdi(prodiSI);
+
+        });
+        Toast.makeText(this, "Data tersimpan", Toast.LENGTH_SHORT).show();
 
     }
     public void toProfil(){

@@ -7,6 +7,7 @@ public class Matakuliah extends RealmObject {
     @PrimaryKey
     private int matakuliahID;
     private String Nama,Prodi;
+    private int Sks;
     private Prodi prodi;
 
     public Matakuliah(){}
@@ -16,6 +17,22 @@ public class Matakuliah extends RealmObject {
         Nama = nama;
         Prodi = prodi;
         this.prodi = prodi1;
+    }
+
+    public Matakuliah(int matakuliahID, String nama, String prodi, int sks, edu.uph.m23si2.pertamaapp.model.Prodi prodi1) {
+        this.matakuliahID = matakuliahID;
+        Nama = nama;
+        Prodi = prodi;
+        Sks = sks;
+        this.prodi = prodi1;
+    }
+
+    public int getSks() {
+        return Sks;
+    }
+
+    public void setSks(int sks) {
+        Sks = sks;
     }
 
     public int getMatakuliahID() {
