@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-
+        initData();
         btnLogin = findViewById(R.id.btnLogin);
         edtNama = findViewById(R.id.edtNama);
         edtPassword = findViewById(R.id.edtPassword);
@@ -49,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
                 toDashboard();
             }
         });
+    }
+
+    public void initData(){ // menambahkan data prodi dan matakuliah
+
     }
     public void toProfil(){
         Intent intent = new Intent(this,ProfilActivity.class);
