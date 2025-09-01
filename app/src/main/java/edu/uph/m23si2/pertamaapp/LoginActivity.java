@@ -3,8 +3,10 @@ package edu.uph.m23si2.pertamaapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -13,15 +15,30 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.uph.m23si2.pertamaapp.api.ApiResponse;
+import edu.uph.m23si2.pertamaapp.api.ApiService;
 import edu.uph.m23si2.pertamaapp.model.Mahasiswa;
 import edu.uph.m23si2.pertamaapp.model.Matakuliah;
 import edu.uph.m23si2.pertamaapp.model.Prodi;
+import edu.uph.m23si2.pertamaapp.model.Provinsi;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     EditText edtNama, edtPassword;
+    Spinner sprProvinsi;
+    List<Provinsi> provinsiList =  new ArrayList<>();
+    List<String> namaProvinsi = new ArrayList<>();
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
         Realm.setDefaultConfiguration(config);
         initData();
+
+        sprProvinsi = findViewById(R.id.sprProvinsi);
         btnLogin = findViewById(R.id.btnLogin);
         edtNama = findViewById(R.id.edtNama);
         edtPassword = findViewById(R.id.edtPassword);
@@ -53,6 +72,29 @@ public class LoginActivity extends AppCompatActivity {
                 toDashboard();
             }
         });
+
+        //init retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl("https://wilayah.id")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        //panggil API
+        apiService.getProvinsi().enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if(response.isSuccessful() && response.body()!=null){
+                    provinsiList = response.body().getData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(LoginActivity.this,"Gagal :"+t.getMessage(),Toast.LENGTH_LONG);
+            }
+        });
+
     }
 
     public void initData(){ // menambahkan data prodi dan matakuliah
