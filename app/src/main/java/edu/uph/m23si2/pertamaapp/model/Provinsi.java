@@ -3,26 +3,26 @@ package edu.uph.m23si2.pertamaapp.model;
 import java.security.PrivateKey;
 
 public class Provinsi {
-    private String Code, Name;
+    private String code, name;
 
     public Provinsi(String code, String name) {
-        Code = code;
-        Name = name;
+        this.code = code;
+        this.name = name;
     }
 
     public String getCode() {
-        return Code;
+        return code;
     }
 
     public void setCode(String code) {
-        Code = code;
+        this.code = code;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 }

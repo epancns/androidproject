@@ -2,7 +2,9 @@ package edu.uph.m23si2.pertamaapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,9 +61,55 @@ public class LoginActivity extends AppCompatActivity {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-        initData();
-
+        //initData();
         sprProvinsi = findViewById(R.id.sprProvinsi);
+        adapter =new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,namaProvinsi);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        sprProvinsi.setAdapter(adapter);
+        //init retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://wilayah.id")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiService apiService = retrofit.create(ApiService.class);
+
+        //panggil API
+        apiService.getProvinsi().enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if(response.isSuccessful() && response.body()!=null){
+                    provinsiList = response.body().getData();
+                    namaProvinsi.clear();
+                    for(Provinsi p: provinsiList){
+                        if(p.getName()!=null){
+                            Log.d("Provinsi", p.getName());
+                            namaProvinsi.add(p.getName());
+                        }
+                    }
+
+                    adapter.notifyDataSetChanged();
+
+                    sprProvinsi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                            Provinsi selected = provinsiList.get(position);
+                            Log.d("Provinsi", selected.getCode() + " - " + selected.getName());
+
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(LoginActivity.this,"Gagal :"+t.getMessage(),Toast.LENGTH_LONG);
+            }
+        });
+
         btnLogin = findViewById(R.id.btnLogin);
         edtNama = findViewById(R.id.edtNama);
         edtPassword = findViewById(R.id.edtPassword);
@@ -73,27 +121,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //init retrofit
-        Retrofit retrofit = new Retrofit.Builder()
-                            .baseUrl("https://wilayah.id")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiService apiService = retrofit.create(ApiService.class);
 
-        //panggil API
-        apiService.getProvinsi().enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if(response.isSuccessful() && response.body()!=null){
-                    provinsiList = response.body().getData();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(LoginActivity.this,"Gagal :"+t.getMessage(),Toast.LENGTH_LONG);
-            }
-        });
 
     }
 
