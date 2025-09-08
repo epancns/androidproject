@@ -22,12 +22,15 @@ import java.util.List;
 
 import edu.uph.m23si2.pertamaapp.api.ApiResponse;
 import edu.uph.m23si2.pertamaapp.api.ApiService;
+import edu.uph.m23si2.pertamaapp.model.KRS;
+import edu.uph.m23si2.pertamaapp.model.KRS_Detail;
 import edu.uph.m23si2.pertamaapp.model.Mahasiswa;
 import edu.uph.m23si2.pertamaapp.model.Matakuliah;
 import edu.uph.m23si2.pertamaapp.model.Prodi;
 import edu.uph.m23si2.pertamaapp.model.Provinsi;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -138,10 +141,33 @@ public class LoginActivity extends AppCompatActivity {
             matMobile.setSks(3);
             matMobile.setProdi(prodiSI);
 
-            Matakuliah matPBO = r.createObject(Matakuliah.class,1);
-            matPBO.setNama("Pemrograman Berorientasi Objek");
-            matPBO.setSks(3);
-            matPBO.setProdi(prodiSI);
+            Matakuliah matSO = r.createObject(Matakuliah.class,1);
+            matSO.setNama("Sistem Operasi");
+            matSO.setSks(3);
+            matSO.setProdi(prodiSI);
+
+            Mahasiswa mahasiswa_pertama = r.createObject(Mahasiswa.class,0);
+            mahasiswa_pertama.setNama("Evangelyn");
+            mahasiswa_pertama.setProdi("Sistem Informasi");
+
+            KRS_Detail krs_detail_matMobile = r.createObject(KRS_Detail.class,0);
+            krs_detail_matMobile.setMatakuliah(matMobile);
+            krs_detail_matMobile.setJam_masuk("17:30");
+            krs_detail_matMobile.setNilai(100);
+
+            KRS_Detail krs_detail_matPBO = r.createObject(KRS_Detail.class,1);
+            krs_detail_matPBO.setMatakuliah(matSO);
+            krs_detail_matPBO.setJam_masuk("17:30");
+            krs_detail_matPBO.setNilai(100);
+
+            RealmList<KRS_Detail> detail_krs = new RealmList<>();
+            detail_krs.add(krs_detail_matMobile);
+            detail_krs.add(krs_detail_matPBO);
+
+            KRS krsmahasiswa = r.createObject(KRS.class,0);
+            krsmahasiswa.setMahasiswa(mahasiswa_pertama);
+            krsmahasiswa.setDosenPengampu("Ade Maulana");
+            krsmahasiswa.setKrs_details(detail_krs);
 
         });
         Toast.makeText(this, "Data tersimpan", Toast.LENGTH_SHORT).show();
